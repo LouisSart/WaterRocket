@@ -24,4 +24,4 @@ $$z_{n+1}=z_n + \Delta t \ F(t_n, z_n)$$
 
 ## Results
 
-![low_pressure](p0=2Pa.png)  ![high_pressure](p0=10Pa.png)
+![figure](fig1.png)  ![figure](fig2.png) ![figure](fig3.png)
