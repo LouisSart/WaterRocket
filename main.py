@@ -7,12 +7,12 @@ D = 0.3 # diameter of tank
 d = 0.02 # diameter of expulsion tube
 S = 3.1416 * (0.5 * D) ** 2 # cross section area of water tank
 s = 3.1416 * (0.5 * d) ** 2 # cross section area of expulsion tube
-beta = (S/s) ** 2 - 1 # convenient constant
+beta = (S/s) ** 2 - 1 # convenient constant (-1 negligeable but OK)
 g = 9.81 # gravity acceleration
 rho = 10 ** 3 # water density
 Pa = 10 ** 5 # Atmospheric pressure
-P0 = 10. * Pa  # Initial tank pressure
-z0 = 0.5 * H # Inital water height
+P0 = 2. * Pa  # Initial tank pressure
+z0 = 0.8 * H # Inital water height
 #V0 = (2 * g * z0 + 2 * (P0 - Pa) / rho) ** 0.5 # initial jet speed
 
 
@@ -31,7 +31,7 @@ def stop(z, f, dt):
         return True, f"hydrostatic equilibrium went wrong, reduce dt"
     return False, ""
 
-dt = 0.05 * H / abs(F(z0))
+dt = 0.01 * H / abs(F(z0))
     
 def euler():
     z = [z0]
@@ -47,7 +47,10 @@ def euler():
     return z, v
     
 z, v = euler()
-# plt.plot(dt * np.arange(len(z)), z)
-plt.plot(dt * np.arange(len(v)), v)
-plt.title("Ejection speed (m/s) with P0 = 10Pa and z0 = H/2")
+f, (water, flow) = plt.subplots(2, 1, constrained_layout=True)
+water.plot(dt * np.arange(len(z)), z)
+water.set_title("Water level (m)")
+flow.plot(dt * np.arange(len(v)), v)
+flow.set_title("Ejection speed (m/s)")
+f.suptitle(f"P0={P0/10**5} atm, z0/H = {z0/H:.2f}, S/s={S/s:.2f}")
 plt.show()
