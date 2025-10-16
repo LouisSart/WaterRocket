@@ -7,7 +7,7 @@ Little physics code for my courses. The point is to simulate the reaction speed 
 Bernoulli's theorem associated with conservation of mass allows the following relations between v, z, and p:
 
 $$\begin{align*}
-p(t)&= \frac{p_0 z_0}{H-z(t)}\\
+p(t)&= \frac{p_0 (H - z_0)}{H-z(t)}\\
 v(t)&= \frac{dz}{dt}\frac{S}{s}\\
 p(t)&-p_a + \frac{1}{2} \rho \left( (\frac{dz}{dt})^2 - v^2) \right) + \rho g z = 0
 \end{align*}$$
