@@ -31,11 +31,11 @@ def stop(z, f, dt):
         return True, f"hydrostatic equilibrium went wrong, reduce dt"
     return False, ""
 
-dt = 0.001 * H / abs(F(z0))
+dt = 0.05 * H / abs(F(z0))
     
 def euler():
     z = [z0]
-    v = [abs(F(z0) * S/s)]
+    v = []
     stop_now, reason = stop(z0, F(z0), dt)
     while not stop_now:
         zn = z[-1]
