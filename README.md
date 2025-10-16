@@ -21,3 +21,7 @@ $$\frac{dz}{dt} = - \sqrt{\frac{2}{\beta}\frac{p(z(t))-p_a}{\rho} + 2gz(t)} = F(
 where $\beta = (\frac{S^2}{s^2}-1)$. We can then use explicit Euler's method to solve this ODE with any starting parameters:
 
 $$z_{n+1}=z_n + \Delta t \ F(t_n, z_n)$$
+
+## Results
+
+![low_pressure](p0=2Pa.png)  ![high_pressure](p0=10Pa.png)
