@@ -22,41 +22,31 @@ def p(z):
 def F(z):
     return - np.sqrt((2. / beta) * ((g * z) + (p(z)-Pa)/rho))
 
-def stop(z, f, dt, t, tf):
+def stop(z, f, dt):
     if z + dt * f < 0:
         return True, "water level hit the bottom"
     if abs(f) < 0.001:
         return True, f"flow reached slow speed: {abs(f)} m/s"
     if (g * z) + (p(z)-Pa)/rho < 0:
         return True, f"hydrostatic equilibrium went wrong, reduce dt"
-    if t > tf:
-        return True, f"final time was reached"
     return False, ""
 
 dt = 0.001 * H / abs(F(z0))
     
-def euler(tf):
+def euler():
     z = [z0]
-    zn = z0
-    f = F(z0)
-    v = [abs(f * S/s)]
-    t = 0
-    stop_now = False
+    v = [abs(F(z0) * S/s)]
+    stop_now, reason = stop(z0, F(z0), dt)
     while not stop_now:
-        # print("Qv=", abs(f * S))
-        # iterate first
-        z.append(zn + dt * f)
-        v.append(abs(f * S/s))
-        
-        # compute for loop stop condition
         zn = z[-1]
         f = F(zn)
-        t += dt
-        stop_now, reason = stop(zn, f, dt, t, tf)
+        z.append(zn + dt * f)
+        v.append(abs(f * S/s))
+        stop_now, reason = stop(zn, f, dt)
     print("Simulation stopped because", reason)
     return z, v
     
-z, v = euler(60.)
+z, v = euler()
 # plt.plot(dt * np.arange(len(z)), z)
 plt.plot(dt * np.arange(len(v)), v)
 plt.title("Ejection speed (m/s) with P0 = 10Pa and z0 = H/2")
