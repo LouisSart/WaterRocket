@@ -23,7 +23,7 @@ def F(z):
     return - np.sqrt((2. / beta) * ((g * z) + (p(z)-Pa)/rho))
 
 def stop(z, f, dt):
-    if z + dt * f < 0:
+    if z < 0:
         return True, "water level hit the bottom"
     if abs(f) < 0.001:
         return True, f"flow reached slow speed: {abs(f)} m/s"
