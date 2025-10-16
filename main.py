@@ -11,8 +11,8 @@ beta = (S/s) ** 2 - 1 # convenient constant
 g = 9.81 # gravity acceleration
 rho = 10 ** 3 # water density
 Pa = 10 ** 5 # Atmospheric pressure
-P0 = 3 * Pa  # Initial tank pressure
-z0 = 0.67 * H # Inital water height
+P0 = 10. * Pa  # Initial tank pressure
+z0 = 0.5 * H # Inital water height
 #V0 = (2 * g * z0 + 2 * (P0 - Pa) / rho) ** 0.5 # initial jet speed
 
 
@@ -26,7 +26,7 @@ def stop(z, f, dt, t, tf):
     if z + dt * f < 0:
         return True, "water level hit the bottom"
     if abs(f) < 0.001:
-        return True, f"flow reached slow speed: {f} m/s"
+        return True, f"flow reached slow speed: {abs(f)} m/s"
     if (g * z) + (p(z)-Pa)/rho < 0:
         return True, f"hydrostatic equilibrium went wrong, reduce dt"
     if t > tf:
@@ -36,23 +36,28 @@ def stop(z, f, dt, t, tf):
 dt = 0.001 * H / abs(F(z0))
     
 def euler(tf):
-    ret = [z0]
-    z = z0
+    z = [z0]
+    zn = z0
     f = F(z0)
+    v = [abs(f * S/s)]
     t = 0
     stop_now = False
     while not stop_now:
+        # print("Qv=", abs(f * S))
         # iterate first
-        ret.append(z + dt * f)
+        z.append(zn + dt * f)
+        v.append(abs(f * S/s))
         
         # compute for loop stop condition
-        z = ret[-1]
-        f = F(z)
+        zn = z[-1]
+        f = F(zn)
         t += dt
-        stop_now, reason = stop(z, f, dt, t, tf)
+        stop_now, reason = stop(zn, f, dt, t, tf)
     print("Simulation stopped because", reason)
-    return ret
+    return z, v
     
-z = euler(60)
-plt.plot(dt * np.arange(len(z)), z)
+z, v = euler(60.)
+# plt.plot(dt * np.arange(len(z)), z)
+plt.plot(dt * np.arange(len(v)), v)
+plt.title("Ejection speed (m/s) with P0 = 10Pa and z0 = H/2")
 plt.show()
