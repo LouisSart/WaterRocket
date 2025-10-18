@@ -31,7 +31,7 @@ For a given set of inital conditions and tank dimensions, $z_n$ is computed unti
 
 If the term $\frac{p(z_n)-p_a}{\rho} + 2gz_n$ becomes negative, then that means the water level is passing sub hydrostatic equilibrium, which is physically impossible. When this happens the simulation is stopped and the user is informed that the time step should be reduced to ensure physical consistency.
 
-### Impact of initial pressure
+### Impact of the initial water height in tank
 
 ![water_level](water_level.png)
 
