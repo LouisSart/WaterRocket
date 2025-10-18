@@ -12,9 +12,7 @@ v(t)&= -\frac{S}{s}\frac{dz}{dt}\\
 p(t)&-p_a + \frac{1}{2} \rho \left( (\frac{dz}{dt})^2 - v^2) \right) + \rho g z = 0
 \end{align*}$$
 
-Which yields the following non-linear ODE on z: $(\frac{dz}{dt})^2(\frac{S^2}{s^2}-1) = \frac{2}{\rho}(p(t)-p_a) + 2gz$
-
-and ultimately (we have to take the negative root here because the water level is decreasing as the tank empties):
+Which yields the following non-linear ODE on z: $(\frac{dz}{dt})^2(\frac{S^2}{s^2}-1) = \frac{2}{\rho}(p(t)-p_a) + 2gz$ and then taking the negative root (because the water level is decreasing as the tank drains) we get:
 
 $$\frac{dz}{dt} = - \sqrt{\frac{2}{\beta}\frac{p(z(t))-p_a}{\rho} + 2gz(t)} = F(t,z(t))$$  
 
