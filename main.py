@@ -1,56 +1,70 @@
 import numpy as np
+from collections import namedtuple
 import matplotlib.pyplot as plt
 
-# Tank dimensions
-H = 1.0 # height of tank
-D = 0.3 # diameter of tank
-d = 0.02 # diameter of expulsion tube
-S = 3.1416 * (0.5 * D) ** 2 # cross section area of water tank
-s = 3.1416 * (0.5 * d) ** 2 # cross section area of expulsion tube
-beta = (S/s) ** 2 - 1 # convenient constant (-1 negligeable but OK)
+# Physics constants
 g = 9.81 # gravity acceleration
 rho = 10 ** 3 # water density
 Pa = 10 ** 5 # Atmospheric pressure
-P0 = 2. * Pa  # Initial tank pressure
-z0 = 0.8 * H # Inital water height
-#V0 = (2 * g * z0 + 2 * (P0 - Pa) / rho) ** 0.5 # initial jet speed
 
+class Tank:
+    def __init__(self, H = 1.0, D = 0.3, d = 0.02):
+        self.H = H # height of tank
+        self.D = D # diameter of tank
+        self.d = d # diameter of ejection tube
+        self.S = 3.1416 * (0.5 * D) ** 2 # cross section area of water tank
+        self.s = 3.1416 * (0.5 * d) ** 2 # cross section area of ejection tube
+        self.beta = (S/s) ** 2 - 1 # convenient constant
 
-def p(z):
-    return P0 * (H - z0) / (H - z)
+InitialConditions = namedtuple("InitialConditions", ["P0", "z0"])
+
+def p(z, tank, ic):
+    return ic.P0 * (tank.H - ic.z0) / (tank.H - z)
     
-def F(z):
-    return - np.sqrt((2. / beta) * ((g * z) + (p(z)-Pa)/rho))
+def F(z, tank, ic):
+    return - np.sqrt((2. / tank.beta) * ((g * z) + (p(z, tank, ic) - Pa) / rho))
 
-def stop(z, f, dt):
+def stop(z, f, tank, ic):
     if z < 0:
         return True, "water level hit the bottom"
     if abs(f) < 0.001:
         return True, f"flow reached slow speed: {abs(f)} m/s"
-    if (g * z) + (p(z)-Pa)/rho < 0:
+    if (g * z) + (p(z, tank, ic) - Pa) / rho < 0:
         return True, f"hydrostatic equilibrium went wrong, reduce dt"
     return False, ""
 
-dt = 0.01 * H / abs(F(z0))
     
-def euler():
-    z = [z0]
+def euler(dt, tank, ic):
+    z = [ic.z0]
     v = []
-    stop_now, reason = stop(z0, F(z0), dt)
+    stop_now, reason = stop(ic.z0, F(ic.z0, tank, ic), tank, ic)
     while not stop_now:
         zn = z[-1]
-        f = F(zn)
+        f = F(zn, tank, ic)
         z.append(zn + dt * f)
-        v.append(abs(f * S/s))
-        stop_now, reason = stop(zn, f, dt)
+        v.append(abs(f * tank.S / tank.s))
+        stop_now, reason = stop(zn, f, tank, ic)
     print("Simulation stopped because", reason)
     return z, v
-    
-z, v = euler()
-f, (water, flow) = plt.subplots(2, 1, constrained_layout=True)
-water.plot(dt * np.arange(len(z)), z)
-water.set_title("Water level (m)")
-flow.plot(dt * np.arange(len(v)), v)
-flow.set_title("Ejection speed (m/s)")
-f.suptitle(f"P0={P0/10**5} atm, z0/H = {z0/H:.2f}, S/s={S/s:.2f}")
-plt.show()
+
+
+if __name__ == "__main__":
+    # Simu
+    tank = Tank()
+    ic = InitialConditions(P0 = 2. * Pa, z0 = 0.8 * tank.H)
+    dt = 0.01 * tank.H / abs(F(ic.z0, tank, ic))
+    z, v = euler(dt, tank, ic)
+
+    # Plot
+    f, (water, flow) = plt.subplots(2, 1, constrained_layout=True, figsize = (8, 8))
+    water.set_title("Water level (m)")
+    water.set_xlabel("t(s)", loc="right")
+    flow.set_title("Ejection speed (m/s)")
+    flow.set_xlabel("t(s)", loc="right")
+
+    simu_params = f"P0={ic.P0/10**5} atm, z0/H = {ic.z0/H:.2f}, S/s={tank.S / tank.s:.2f}"
+    water_plot = water.plot(dt * np.arange(len(z)), z, label = simu_params)
+    flow_plot = flow.plot(dt * np.arange(len(v)), v, label = simu_params)
+    water.legend()
+    flow.legend()
+    plt.show()
