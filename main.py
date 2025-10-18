@@ -59,15 +59,15 @@ if __name__ == "__main__":
     # Simus
     tank = Tank(d = 0.02)
     ic = InitialConditions(P0 = 2. * Pa, z0 = 0.6 * tank.H)
-    dt = 0.01 * tank.H / abs(F(ic.z0, tank, ic))
+    dt = 10**-4 * tank.H / abs(F(ic.z0, tank, ic))
     z, v = euler(dt, tank, ic)
     # ----------------------
     ic1 = InitialConditions(P0 = 2. * Pa, z0 = 0.5 * tank.H)
-    dt = 0.01 * tank.H / abs(F(ic1.z0, tank, ic1))
+    dt = 10**-4  * tank.H / abs(F(ic1.z0, tank, ic1))
     z1, v1 = euler(dt, tank, ic1)
     # ----------------------
     ic2 = InitialConditions(P0 = 2. * Pa, z0 = 0.4 * tank.H)
-    dt = 0.01 * tank.H / abs(F(ic2.z0, tank, ic2))
+    dt = 10**-4  * tank.H / abs(F(ic2.z0, tank, ic2))
     z2, v2 = euler(dt, tank, ic2)
 
     # Plot
