@@ -36,8 +36,8 @@ def stop(z, f, tank, ic):
     
 def euler(dt, tank, ic):
     z = [ic.z0]
-    v = []
-    stop_now, reason = stop(ic.z0, F(ic.z0, tank, ic), tank, ic)
+    v = [abs(F(ic.z0, tank, ic) * tank.S / tank.s)]
+    stop_now, reason = stop(z[0], v[0], tank, ic)
     while not stop_now:
         zn = z[-1]
         f = F(zn, tank, ic)
