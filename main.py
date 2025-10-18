@@ -37,14 +37,14 @@ def stop(z, f, tank, ic):
 def euler(dt, tank, ic):
     z = [ic.z0]
     v = [abs(F(ic.z0, tank, ic) * tank.S / tank.s)]
-    p = [pressure(z[0], tank, ic)]
+    p = [pressure(z[0], tank, ic) / Pa]
     stop_now, reason = stop(z[0], v[0], tank, ic)
     while not stop_now:
         zn = z[-1]
         f = F(zn, tank, ic)
         z.append(zn + dt * f)
         v.append(abs(f * tank.S / tank.s))
-        p.append(pressure(zn, tank, ic))
+        p.append(pressure(zn, tank, ic) / Pa)
         stop_now, reason = stop(zn, f, tank, ic)
     print("Simulation stopped because", reason)
     return z, v, p
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     plot(p2, tank, ic2, p_ax)
     w_ax.set_title("Water level (m)")
     w_ax.set_xlabel("t(s)", loc="right")
-    p_ax.set_title("Tank pressure (Pa)")
+    p_ax.set_title("Tank pressure (bar)")
     p_ax.set_xlabel("t(s)", loc="right")
 
     
