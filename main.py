@@ -57,7 +57,7 @@ def plot(z, v, tank, ic, water, flow, color=''):
 
 if __name__ == "__main__":
     # Simus
-    tank = Tank(d = 0.005)
+    tank = Tank(d = 0.02)
     ic = InitialConditions(P0 = 2. * Pa, z0 = 0.6 * tank.H)
     dt = 0.01 * tank.H / abs(F(ic.z0, tank, ic))
     z, v = euler(dt, tank, ic)
