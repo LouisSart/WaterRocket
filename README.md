@@ -24,4 +24,4 @@ $$z_{n+1}=z_n + \Delta t \ F(t_n, z_n)$$
 
 ## Results
 
-![figure](fig1.png)  ![figure](fig2.png) ![figure](fig3.png)
+![water_level](water_level.png)

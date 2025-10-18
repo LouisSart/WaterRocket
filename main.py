@@ -14,7 +14,7 @@ class Tank:
         self.d = d # diameter of ejection tube
         self.S = 3.1416 * (0.5 * D) ** 2 # cross section area of water tank
         self.s = 3.1416 * (0.5 * d) ** 2 # cross section area of ejection tube
-        self.beta = (S/s) ** 2 - 1 # convenient constant
+        self.beta = (self.S / self.s) ** 2 - 1 # convenient constant
 
 InitialConditions = namedtuple("InitialConditions", ["P0", "z0"])
 
@@ -47,24 +47,40 @@ def euler(dt, tank, ic):
     print("Simulation stopped because", reason)
     return z, v
 
+def plot(z, v, tank, ic, water, flow, color=''):
+    PoP = "${\\frac{P_0}{P_a}}$"
+    zoH = "${\\frac{z_0}{H}}$"
+    soS = "${\\frac{s}{S}}$"
+    simu_params = f"{PoP}={ic.P0/Pa}, {zoH}={ic.z0/tank.H:.2f}, {soS}={tank.S / tank.s:.2f}"
+    water_plot = water.plot(dt * np.arange(len(z)), z, label = simu_params)
+    flow_plot = flow.plot(dt * np.arange(len(v)), v, label = simu_params)
 
 if __name__ == "__main__":
-    # Simu
-    tank = Tank()
-    ic = InitialConditions(P0 = 2. * Pa, z0 = 0.8 * tank.H)
+    # Simus
+    tank = Tank(d = 0.005)
+    ic = InitialConditions(P0 = 2. * Pa, z0 = 0.6 * tank.H)
     dt = 0.01 * tank.H / abs(F(ic.z0, tank, ic))
     z, v = euler(dt, tank, ic)
+    # ----------------------
+    ic1 = InitialConditions(P0 = 2. * Pa, z0 = 0.5 * tank.H)
+    dt = 0.01 * tank.H / abs(F(ic1.z0, tank, ic1))
+    z1, v1 = euler(dt, tank, ic1)
+    # ----------------------
+    ic2 = InitialConditions(P0 = 2. * Pa, z0 = 0.4 * tank.H)
+    dt = 0.01 * tank.H / abs(F(ic2.z0, tank, ic2))
+    z2, v2 = euler(dt, tank, ic2)
 
     # Plot
     f, (water, flow) = plt.subplots(2, 1, constrained_layout=True, figsize = (8, 8))
     water.set_title("Water level (m)")
     water.set_xlabel("t(s)", loc="right")
+    plot(z, v, tank, ic, water, flow)
+    plot(z1, v1, tank, ic1, water, flow, color = 'red')
+    plot(z2, v2, tank, ic2, water, flow, color = 'green')
     flow.set_title("Ejection speed (m/s)")
     flow.set_xlabel("t(s)", loc="right")
 
-    simu_params = f"P0={ic.P0/10**5} atm, z0/H = {ic.z0/H:.2f}, S/s={tank.S / tank.s:.2f}"
-    water_plot = water.plot(dt * np.arange(len(z)), z, label = simu_params)
-    flow_plot = flow.plot(dt * np.arange(len(v)), v, label = simu_params)
+    
     water.legend()
     flow.legend()
     plt.show()
