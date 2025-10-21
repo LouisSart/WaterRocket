@@ -14,14 +14,14 @@ v(t) &\ll |\frac{dz}{dt}| \\
 Under these hypotheses Bernoulli's theorem, conservation of mass flow and adiabatic expansion yield the following relations between $v$, $z$, and $p$:
 
 $$\begin{align*}
-p_a -& p(t) + \frac{1}{2} \rho v^2= 0 \\
+p(t) -& p_a + \frac{1}{2} \rho v^2= 0 \\
 v(t)&= -\frac{S}{s}\frac{dz}{dt} = - \frac{1}{\beta}\frac{dz}{dt}\\
-p(t)&= \frac{p_0 (H - z_0)^\gamma}{(H-z(t))^\gamma}\\
+p(t)&= p_0 \left( \frac{H-z_0}{H-z} \right)^\gamma\\
 \end{align*}$$
 
 Which yields the following non-linear ODE on z:
 
-$$\frac{dz}{dt} = - \beta \sqrt{\frac{2}{\rho} (p_a-p_0\frac{(H-z_0)^\gamma}{(H-z)^\gamma}} = F(z)$$
+$$\frac{dz}{dt} = - \beta \sqrt{\frac{2}{\rho} (p_0 \left( \frac{H-z_0}{H-z} \right)^\gamma - p_a)} = F(z)$$
 
 We can then use explicit Euler's method to solve this ODE with any starting parameters:
 
