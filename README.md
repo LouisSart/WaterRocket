@@ -4,19 +4,26 @@ Simulation of the emptying speed of a water tank when put under pressure. The wa
 
 ![equation](rocket.jpg)
 
-Bernoulli's theorem associated with conservation of mass allows the following relations between $v$, $z$, and $p$:
+We make the following assumptions :
 
-$$\begin{align*}
-p(t)&= \frac{p_0 (H - z_0)}{H-z(t)}\\
-v(t)&= -\frac{S}{s}\frac{dz}{dt}\\
-p(t)&-p_a + \frac{1}{2} \rho \left( (\frac{dz}{dt})^2 - v^2) \right) + \rho g z = 0
+$$\begin{align*} 
+v(t) &\ll |\frac{dz}{dt}| \\
+\rho g z(t) &\ll p(t)-p_a
 \end{align*}$$
 
-Which yields the following non-linear ODE on z: $(\frac{dz}{dt})^2(\frac{S^2}{s^2}-1) = \frac{2}{\rho}(p(t)-p_a) + 2gz$ . Then taking the negative root (because the water level is decreasing as the tank drains) we get:
+Under these hypotheses Bernoulli's theorem, conservation of mass flow and adiabatic expansion yield the following relations between $v$, $z$, and $p$:
 
-$$\frac{dz}{dt} = - \sqrt{\frac{2}{\beta} \left( \frac{p(z)-p_a}{\rho} + gz \right)} = F(z)$$
+$$\begin{align*}
+p_a -& p(t) + \frac{1}{2} \rho v^2= 0 \\
+v(t)&= -\frac{S}{s}\frac{dz}{dt} = - \frac{1}{\beta}\frac{dz}{dt}\\
+p(t)&= \frac{p_0 (H - z_0)^\gamma}{(H-z(t))^\gamma}\\
+\end{align*}$$
 
-where $\beta = (\frac{S^2}{s^2}-1)$. We can then use explicit Euler's method to solve this ODE with any starting parameters:
+Which yields the following non-linear ODE on z:
+
+$$\frac{dz}{dt} = - \beta \sqrt{\frac{2}{\rho} (p_a-p_0\frac{(H-z_0)^\gamma}{(H-z)^\gamma}} = F(z)$$
+
+We can then use explicit Euler's method to solve this ODE with any starting parameters:
 
 $$z_{n+1}=z_n + \Delta t \ F(z_n)$$
 
