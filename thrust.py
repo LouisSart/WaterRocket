@@ -28,10 +28,7 @@ if __name__ == "__main__":
         th = [thrust(vv, tank) for vv in v]
         impulse = midpoint(t, th)
         mean_th = impulse / t[-1]
-        # print(f"Peak thrust : {max(th):.2f} N")
-        # print(f"Mean thrust : {mean_th:.2f} N")
         ax.plot(t, th, label = f"$P_0$ = {c} bar, Impulse = {impulse:.2f} Ns")
-
     ax.legend()
     plt.show()
 
