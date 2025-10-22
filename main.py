@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 g = 9.81 # gravity acceleration
 rho = 10 ** 3 # water density
 Pa = 10 ** 5 # Atmospheric pressure
+gam = 1.4 # air adiabatic index Cp/Cv
 
 class Tank:
     def __init__(self, H = 1.0, D = 0.3, d = 0.02):
@@ -14,31 +15,36 @@ class Tank:
         self.d = d # diameter of ejection tube
         self.S = 3.1416 * (0.5 * D) ** 2 # cross section area of water tank
         self.s = 3.1416 * (0.5 * d) ** 2 # cross section area of ejection tube
-        self.beta = (self.S / self.s) ** 2 - 1 # convenient constant
+        self.beta = self.s / self.S # convenient constant
 
 InitialConditions = namedtuple("InitialConditions", ["P0", "z0"])
 
 def pressure(z, tank, ic):
-    return ic.P0 * (tank.H - ic.z0) / (tank.H - z)
+    assert(z < tank.H)
+    return ic.P0 * ((tank.H - ic.z0) / (tank.H - z)) ** gam
     
 def F(z, tank, ic):
-    return - np.sqrt((2. / tank.beta) * ((g * z) + (pressure(z, tank, ic) - Pa) / rho))
+    return - tank.beta *  np.sqrt((2. / rho) * (pressure(z, tank, ic) - Pa))
 
 def stop(z, f, tank, ic):
     if z < 0:
         return True, "water level hit the bottom"
     if abs(f) < 0.001:
         return True, f"flow reached slow speed: {abs(f)} m/s"
-    if (g * z) + (pressure(z, tank, ic) - Pa) / rho < 0:
-        return True, f"hydrostatic equilibrium went wrong, reduce dt"
+    if pressure(z, tank, ic) < Pa:
+        return True, "internal pressure is lower than atmospheric pressure"
     return False, ""
 
     
 def euler(dt, tank, ic):
+    assert(ic.P0 > Pa)
+    assert(ic.z0 > 0)
+
     z = [ic.z0]
     v = [abs(F(ic.z0, tank, ic) * tank.S / tank.s)]
-    p = [pressure(z[0], tank, ic) / Pa]
+    p = [pressure(z[0], tank, ic)]
     stop_now, reason = stop(z[0], v[0], tank, ic)
+
     while not stop_now:
         zn = z[-1]
         f = F(zn, tank, ic)
@@ -59,15 +65,15 @@ def plot(data, tank, ic, ax):
 if __name__ == "__main__":
     # Simus
     tank = Tank(d = 0.02)
-    ic = InitialConditions(P0 = 2. * Pa, z0 = 0.6 * tank.H)
+    ic = InitialConditions(P0 = 2. * Pa, z0 = 0.5 * tank.H)
     dt = 10**-4 * tank.H / abs(F(ic.z0, tank, ic))
     z, v, p = euler(dt, tank, ic)
     # ----------------------
-    ic1 = InitialConditions(P0 = 2. * Pa, z0 = 0.5 * tank.H)
+    ic1 = InitialConditions(P0 = 2. * Pa, z0 = 0.4 * tank.H)
     dt = 10**-4  * tank.H / abs(F(ic1.z0, tank, ic1))
     z1, v1, p1 = euler(dt, tank, ic1)
     # ----------------------
-    ic2 = InitialConditions(P0 = 2. * Pa, z0 = 0.4 * tank.H)
+    ic2 = InitialConditions(P0 = 2. * Pa, z0 = 0.3 * tank.H)
     dt = 10**-4  * tank.H / abs(F(ic2.z0, tank, ic2))
     z2, v2, p2 = euler(dt, tank, ic2)
 
