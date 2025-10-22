@@ -42,9 +42,17 @@ If the term $\frac{p(z_n)-p_a}{\rho} + gz_n$ becomes negative, then that means t
 
 The figure above shows the water level and ejection speed over the time of the simulation for a starting pressure of 2 bars and three different initial water levels. When the starting water height is half the tank's height, then the tank fully empties as the tank pressure reaches atmospheric pressure. If we increase the water level, the pressures balance out before the tank is emptied. On the other hand, a less full water tank gets emptied faster, and keeps a higher internal pressure up to the end.
 
-### Impact of inital air pressure on thrust and impulse
+### Impact of inital air pressure on thrust
 
-In this section we study the real-life rocket : a Coke bottle of $D=9cm$ and $d=10mm$, starting with $z_0=\frac{1}{3}H$.
+In this section and the next we study the real-life rocket : a Coke bottle of $D=9cm$ and $d=10mm$, starting with $z_0=\frac{1}{3}H$.
 ![thrust](thrust.png)
 
 The overall thrust that is produced by the water ejection is plotted above for different initial pressures of the rocket body. The impulse here is computed for the jet reaction alone, ignoring the impact of the weight on the rocket's dynamics.
+
+### Optimal initial water level
+
+In this section we are trying to answer the question : "How much water should I put in the tank to get maximal impulse ?" It is a natural question to ask because more water will yield a longer thrust phase, but in return will give a heavier rocket. Thus we need to find the right tradeoff between mass flow rate and weight.
+
+![impulse](impulse.png)
+
+The figure above shows the total impulse produced in different ($P_0$, $z_0$) contexts. As the rocket gets heavier ($z_0$ increases) the impulse ultimately drops in every case. The optimal value seems to be obtained for a different value of $\frac{z_0}{H}$ for each initial pressure
