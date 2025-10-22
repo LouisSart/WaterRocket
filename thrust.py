@@ -12,20 +12,20 @@ def thrust(v, tank):
     # Thrust exerted by the ejected fluid onto the tank/rocket
     return rho * tank.s * v**2
 
+rocket = Tank(D = 0.09, d = 0.01)
 if __name__ == "__main__":
     # Run the simulation
-    tank = Tank(D = 0.09, d = 0.01)
     fig, ax = plt.subplots()
     ax.set_title("Thrust (N)")
     ax.set_xlabel("t(s)", loc="right")
 
     for c in (2., 3., 4., 5.):
-        ic = InitialConditions(P0 = c * Pa, z0 = 0.33 * tank.H)
-        dt = 10**-5 * tank.H / abs(F(ic.z0, tank, ic))
-        t, z, v, p = euler(tank, ic)
+        ic = InitialConditions(P0 = c * Pa, z0 = 0.33 * rocket.H)
+        dt = 10**-5 * rocket.H / abs(F(ic.z0, rocket, ic))
+        t, z, v, p = euler(rocket, ic)
 
         # Compute the thrust produced over the different time steps
-        th = [thrust(vv, tank) for vv in v]
+        th = [thrust(vv, rocket) for vv in v]
         impulse = midpoint(t, th)
         mean_th = impulse / t[-1]
         ax.plot(t, th, label = f"$P_0$ = {c} bar, Impulse = {impulse:.2f} Ns")
@@ -38,6 +38,6 @@ if __name__ == "__main__":
     # print(f"Propulsion energy : {cinetic:.2f} J")
 
     # Pressure forces work
-    V = [(tank.H - zz) * tank.S for zz in z]
+    V = [(rocket.H - zz) * rocket.S for zz in z]
     pW = midpoint(V, p)
     # print(f"Pressure forces work: {pW:.2f} J")
