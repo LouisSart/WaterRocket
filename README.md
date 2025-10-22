@@ -34,8 +34,6 @@ For a given set of inital conditions and tank dimensions, $z_n$ is computed unti
 1. The water level has reached the bottom of the tank
 2. The water level speed comes close to zero (meaning hydrostatic equilibrium is reached)
 
-If the term $\frac{p(z_n)-p_a}{\rho} + gz_n$ becomes negative, then that means the water level is passing under hydrostatic equilibrium, which is physically impossible. When this happens the simulation is stopped and the user is informed that the time step should be reduced to ensure physical consistency.
-
 ### Impact of the initial water height in tank
 
 ![water_level](water_level.png)
@@ -51,7 +49,7 @@ The overall thrust that is produced by the water ejection is plotted above for d
 
 ### Optimal initial water level
 
-In this section we are trying to answer the question : "How much water should I put in the tank to get maximal impulse ?" It is a natural question to ask because more water will yield a longer thrust phase, but in return will give a heavier rocket. Thus we need to find the right tradeoff between mass flow rate and weight.
+In this section we are trying to answer the question : "How much water should I put in the tank to get maximal impulse ?" It is a natural question to ask because more water will yield a longer thrust phase, but in return will give a heavier rocket. Here are the computations of the overall impulse on the rocket : water weight + jet reaction force. Note that the rocket weight itself is ignored here (measures are yet to come).
 
 ![impulse](impulse.png)
 
