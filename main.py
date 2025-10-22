@@ -36,10 +36,11 @@ def stop(z, f, tank, ic):
     return False, ""
 
     
-def euler(dt, tank, ic):
+def euler(tank, ic):
     assert(ic.P0 > Pa)
     assert(ic.z0 > 0)
 
+    dt = 10**-4 * tank.H / abs(F(ic.z0, tank, ic))
     z = [ic.z0]
     v = [abs(F(ic.z0, tank, ic) * tank.S / tank.s)]
     p = [pressure(z[0], tank, ic)]
@@ -52,39 +53,40 @@ def euler(dt, tank, ic):
         v.append(abs(f * tank.S / tank.s))
         p.append(pressure(zn, tank, ic))
         stop_now, reason = stop(zn, f, tank, ic)
-    print("Simulation stopped because", reason)
-    return z, v, p
 
-def plot(data, tank, ic, ax):
+    t = dt * np.arange(len(z))
+    print("Simulation stopped because", reason)
+    return t, z, v, p
+
+def plot(x, data, tank, ic, ax):
     PoP = "${\\frac{P_0}{P_a}}$"
     zoH = "${\\frac{z_0}{H}}$"
     soS = "${\\frac{s}{S}}$"
     simu_params = f"{PoP}={ic.P0/Pa}, {zoH}={ic.z0/tank.H:.2f}, {soS}={tank.S / tank.s:.2f}"
-    ax.plot(dt * np.arange(len(data)), data, label = simu_params)
+    ax.plot(x, data, label = simu_params)
 
 if __name__ == "__main__":
     # Simus
     tank = Tank(d = 0.02)
     ic = InitialConditions(P0 = 2. * Pa, z0 = 0.5 * tank.H)
-    dt = 10**-4 * tank.H / abs(F(ic.z0, tank, ic))
-    z, v, p = euler(dt, tank, ic)
+    t, z, v, p = euler(tank, ic)
     # ----------------------
     ic1 = InitialConditions(P0 = 2. * Pa, z0 = 0.4 * tank.H)
-    dt = 10**-4  * tank.H / abs(F(ic1.z0, tank, ic1))
-    z1, v1, p1 = euler(dt, tank, ic1)
+    dt1 = 10**-4  * tank.H / abs(F(ic1.z0, tank, ic1))
+    t1, z1, v1, p1 = euler(tank, ic1)
     # ----------------------
     ic2 = InitialConditions(P0 = 2. * Pa, z0 = 0.3 * tank.H)
-    dt = 10**-4  * tank.H / abs(F(ic2.z0, tank, ic2))
-    z2, v2, p2 = euler(dt, tank, ic2)
+    dt2 = 10**-4  * tank.H / abs(F(ic2.z0, tank, ic2))
+    t2, z2, v2, p2 = euler(tank, ic2)
 
     # Plot
     f, (w_ax, p_ax) = plt.subplots(2, 1, constrained_layout=True, figsize = (8, 8))
-    plot(z, tank, ic, w_ax)
-    plot(z1, tank, ic1, w_ax)
-    plot(z2, tank, ic2, w_ax)
-    plot(np.array(p) / Pa, tank, ic, p_ax)
-    plot(np.array(p1) / Pa, tank, ic1, p_ax)
-    plot(np.array(p2) / Pa, tank, ic2, p_ax)
+    plot(t, z, tank, ic, w_ax)
+    plot(t1, z1, tank, ic1, w_ax)
+    plot(t2, z2, tank, ic2, w_ax)
+    plot(t, np.array(p) / Pa, tank, ic, p_ax)
+    plot(t1, np.array(p1) / Pa, tank, ic1, p_ax)
+    plot(t2, np.array(p2) / Pa, tank, ic2, p_ax)
     w_ax.set_title("Water level (m)")
     w_ax.set_xlabel("t(s)", loc="right")
     p_ax.set_title("Tank pressure (bar)")
