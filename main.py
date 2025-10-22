@@ -58,41 +58,25 @@ def euler(tank, ic):
     print("Simulation stopped because", reason)
     return t, z, v, p
 
-def plot(x, data, tank, ic, ax):
-    PoP = "${\\frac{P_0}{P_a}}$"
-    zoH = "${\\frac{z_0}{H}}$"
-    soS = "${\\frac{s}{S}}$"
-    simu_params = f"{PoP}={ic.P0/Pa}, {zoH}={ic.z0/tank.H:.2f}, {soS}={tank.S / tank.s:.2f}"
-    ax.plot(x, data, label = simu_params)
-
 if __name__ == "__main__":
     # Simus
     tank = Tank(d = 0.02)
-    ic = InitialConditions(P0 = 2. * Pa, z0 = 0.5 * tank.H)
-    t, z, v, p = euler(tank, ic)
-    # ----------------------
-    ic1 = InitialConditions(P0 = 2. * Pa, z0 = 0.4 * tank.H)
-    dt1 = 10**-4  * tank.H / abs(F(ic1.z0, tank, ic1))
-    t1, z1, v1, p1 = euler(tank, ic1)
-    # ----------------------
-    ic2 = InitialConditions(P0 = 2. * Pa, z0 = 0.3 * tank.H)
-    dt2 = 10**-4  * tank.H / abs(F(ic2.z0, tank, ic2))
-    t2, z2, v2, p2 = euler(tank, ic2)
-
-    # Plot
     f, (w_ax, p_ax) = plt.subplots(2, 1, constrained_layout=True, figsize = (8, 8))
-    plot(t, z, tank, ic, w_ax)
-    plot(t1, z1, tank, ic1, w_ax)
-    plot(t2, z2, tank, ic2, w_ax)
-    plot(t, np.array(p) / Pa, tank, ic, p_ax)
-    plot(t1, np.array(p1) / Pa, tank, ic1, p_ax)
-    plot(t2, np.array(p2) / Pa, tank, ic2, p_ax)
     w_ax.set_title("Water level (m)")
     w_ax.set_xlabel("t(s)", loc="right")
     p_ax.set_title("Tank pressure (bar)")
     p_ax.set_xlabel("t(s)", loc="right")
 
-    
+    for c in (0.5, 0.4, 0.3):
+        ic = InitialConditions(P0 = 2. * Pa, z0 = c * tank.H)
+        t, z, v, p = euler(tank, ic)
+        PoP = "${\\frac{P_0}{P_a}}$"
+        zoH = "${\\frac{z_0}{H}}$"
+        soS = "${\\frac{s}{S}}$"
+        legend = f"{PoP}={ic.P0/Pa}, {zoH}={ic.z0/tank.H:.2f}, {soS}={tank.S / tank.s:.2f}"
+        w_ax.plot(t, z, label = legend)
+        p_ax.plot(t, np.array(p) / Pa, label = legend)
+
     w_ax.legend()
     p_ax.legend()
     plt.show()
