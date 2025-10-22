@@ -36,7 +36,7 @@ def stop(z, f, tank, ic):
     return False, ""
 
     
-def euler(tank, ic):
+def euler(tank, ic, verbose = True):
     assert(ic.P0 > Pa)
     assert(ic.z0 > 0)
 
@@ -55,7 +55,7 @@ def euler(tank, ic):
         stop_now, reason = stop(zn, f, tank, ic)
 
     t = dt * np.arange(len(z))
-    print("Simulation stopped because", reason)
+    if verbose : print("Simulation stopped because", reason)
     return t, z, v, p
 
 if __name__ == "__main__":
